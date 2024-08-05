@@ -47,6 +47,8 @@ jobs:
           poetry run flake8
       - name: Install SQL
         run: docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=YourStrong@Passw0rdFakeForSourceControl" -e "MSSQL_COLLATION=SQL_Latin1_General_CP1_CI_AS" -p 1433:1433 --memory="5g" -d "mcr.microsoft.com/mssql/server:2022-latest"
+      - name: Alter migration settings
+        run: cd ./server && python alter_alembic_ini.py
       - name: Run migration
         run: |
           cd ./server

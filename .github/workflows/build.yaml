@@ -48,10 +48,10 @@ jobs:
       - name: Install SQL
         run: docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=fake_source_control_value" -e "MSSQL_COLLATION=SQL_Latin1_General_CP1_CI_AS" --name sql -p 1433:1433 --memory="5g" -d "mcr.microsoft.com/mssql/server:2019-latest"
       - name: Run migration
-        shell: pwsh
         run: |
           cd ./server
-          ./migrate.ps1
+          . .venv/bin/activate
+          alembic upgrade head
       - name: Test with pytest
         run: |
           cd ./server

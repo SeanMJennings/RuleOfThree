@@ -41,6 +41,7 @@ def create_db_if_not_exists():
     connection_url = URL.create(
         "mssql+pyodbc", query={"odbc_connect": connection_string}
     )
+    print(connection_url)
     # engine = create_engine(connection_url)
     # print("end of alternate test")
     # engine = create_engine(db_uri)

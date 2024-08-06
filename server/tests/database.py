@@ -17,7 +17,7 @@ def get_pydapper_db_connection():
     import pydapper
 
     return pydapper.connect(
-        f"mssql://{secret_config['user']}:{secret_config['password']}@{config['server']}:{config['port']}/{config['database']}",
+        f"mssql+pymssql://{secret_config['user']}:{secret_config['password']}@{config['server']}:{config['port']}/{config['database']}",
         autocommit=True,
     )
 

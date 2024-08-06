@@ -62,7 +62,7 @@ def create_db_if_not_exists():
                 text(f"ALTER DATABASE [{database}] SET CONTAINMENT = PARTIAL")
             )
             print("successfully executed ALTER DATABASE")
-        engine = create_engine(connection_url)
+        engine = create_engine(db_uri)
         with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
             connection.execute(
                 text(

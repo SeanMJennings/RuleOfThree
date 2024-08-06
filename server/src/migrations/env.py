@@ -34,8 +34,9 @@ target_metadata = None
 
 
 def create_db_if_not_exists():
-    db_uri = config.get_section(config.config_ini_section, {})["sqlalchemy.url"]
-    database = re.search(r"^(?P<dbname>[^?]+)", db_uri.split("/")[-1]).group("dbname")
+    #db_uri = config.get_section(config.config_ini_section, {})["sqlalchemy.url"]
+    #database = re.search(r"^(?P<dbname>[^?]+)", db_uri.split("/")[-1]).group("dbname")
+    database = "ruleofthree"
     # try:
     connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
     connection_url = URL.create(

@@ -37,20 +37,23 @@ def create_db_if_not_exists():
     db_uri = config.get_section(config.config_ini_section, {})["sqlalchemy.url"]
     database = re.search(r"^(?P<dbname>[^?]+)", db_uri.split("/")[-1]).group("dbname")
     try:
-        print("start of alternate test")
-        connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
+        connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;DATABASE=ruleofthree;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
         connection_url = URL.create(
             "mssql+pyodbc", query={"odbc_connect": connection_string}
         )
         engine = create_engine(connection_url)
-        print("end of alternate test")
-        engine = create_engine(db_uri)
+        # engine = create_engine(db_uri)
         with engine.connect():
             print(f"Database {database} already exists.")
-    except exc.InterfaceError:
+    except (exc.InterfaceError, exc.OperationalError):
         print(f"Database {database} does not exist. Creating now.")
-        create_database(db_uri)
-        engine = create_engine(db_uri.replace(database, "master"))
+        create_database(connection_url)
+        master_connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
+        master_connection_url = URL.create(
+            "mssql+pyodbc", query={"odbc_connect": master_connection_string}
+        )
+        #engine = create_engine(connection_url.replace(database, "master"))
+        engine = create_engine(master_connection_url)
         with engine.connect().execution_options(
             isolation_level="AUTOCOMMIT"
         ) as connection:
@@ -61,7 +64,7 @@ def create_db_if_not_exists():
             connection.execute(
                 text(f"ALTER DATABASE [{database}] SET CONTAINMENT = PARTIAL")
             )
-        engine = create_engine(db_uri)
+        engine = create_engine(connection_url)
         with engine.connect().execution_options(
             isolation_level="AUTOCOMMIT"
         ) as connection:

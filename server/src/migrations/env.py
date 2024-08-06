@@ -73,9 +73,10 @@ def create_db_if_not_exists():
         connection.execute(
             text(
                 f"""
-                Use [ruleofthree];
+                Use [ruleofthree]
                 GO
                 CREATE USER {secret_config['user']} with PASSWORD = '{secret_config['password']}';
+                GO
                 """
             )
         )

@@ -38,7 +38,7 @@ def create_db_if_not_exists():
     database = re.search(r"^(?P<dbname>[^?]+)", db_uri.split("/")[-1]).group("dbname")
     try:
         print("start of alternate test")
-        connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;DATABASE=master;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
+        connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
         connection_url = URL.create(
             "mssql+pyodbc", query={"odbc_connect": connection_string}
         )

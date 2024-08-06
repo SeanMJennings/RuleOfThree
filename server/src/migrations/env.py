@@ -72,9 +72,14 @@ def create_db_if_not_exists():
     with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
         connection.execute(
             text(
-                f"CREATE USER {secret_config['user']} with PASSWORD = '{secret_config['password']}';"
+                f"""
+                Use [ruleofthree];
+                GO
+                CREATE USER {secret_config['user']} with PASSWORD = '{secret_config['password']}';
+                """
             )
         )
+        print("successfully created user")
 
 
 def run_migrations_offline() -> None:

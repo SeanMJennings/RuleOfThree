@@ -60,13 +60,16 @@ def create_db_if_not_exists():
             isolation_level="AUTOCOMMIT"
         ) as connection:
             connection.execute(text(f"CREATE DATABASE {database};"))
+            print("successfully created database")
             connection.execute(
                 text("sp_configure 'contained database authentication', 1; ")
             )
+            print("successfully executed sp_configure")
             connection.execute(text("RECONFIGURE;"))
             connection.execute(
                 text(f"ALTER DATABASE [{database}] SET CONTAINMENT = PARTIAL")
             )
+            print("successfully executed ALTER DATABASE")
         engine = create_engine(connection_url)
         with engine.connect().execution_options(
             isolation_level="AUTOCOMMIT"

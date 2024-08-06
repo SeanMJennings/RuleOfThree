@@ -76,9 +76,7 @@ def create_db_if_not_exists():
             text(
                 f"""
                 Use [ruleofthree]
-                GO
-                CREATE USER {secret_config['user']} with PASSWORD = '{secret_config['password']}';
-                GO
+                CREATE USER {secret_config['user']} with PASSWORD = '{secret_config['password']}'
                 """
             )
         )

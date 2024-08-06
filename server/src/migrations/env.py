@@ -47,13 +47,14 @@ def create_db_if_not_exists():
             print(f"Database {database} already exists.")
     except (exc.InterfaceError, exc.OperationalError, exc.ProgrammingError):
         print(f"Database {database} does not exist. Creating now.")
-        #create_database(connection_url)
-        master_connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
+        # create_database(connection_url)
+        master_connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;DATABASE=master;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
         master_connection_url = URL.create(
             "mssql+pyodbc", query={"odbc_connect": master_connection_string}
         )
         # engine = create_engine(connection_url.replace(database, "master"))
         engine = create_engine(master_connection_url)
+        print("successfully connected to server")
         with engine.connect().execution_options(
             isolation_level="AUTOCOMMIT"
         ) as connection:

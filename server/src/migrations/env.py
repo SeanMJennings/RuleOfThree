@@ -77,6 +77,7 @@ def create_db_if_not_exists():
                 f"""
                 Use [ruleofthree]
                 CREATE USER {secret_config['user']} with PASSWORD = '{secret_config['password']}'
+                exec sp_addrolemember 'db_owner', '{secret_config['user']}'
                 """
             )
         )

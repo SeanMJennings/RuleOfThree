@@ -50,7 +50,9 @@ def create_db_if_not_exists():
         # engine = create_engine(connection_url.replace(database, "master"))
         engine = create_engine(master_connection_url)
         print("successfully connected to server")
-        with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
+        with engine.connect().execution_options(
+            isolation_level="AUTOCOMMIT"
+        ) as connection:
             connection.execute(text(f"CREATE DATABASE {database};"))
             print("successfully created database")
             connection.execute(
@@ -63,7 +65,9 @@ def create_db_if_not_exists():
             )
             print("successfully executed ALTER DATABASE")
         engine = create_engine(db_uri)
-        with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
+        with engine.connect().execution_options(
+            isolation_level="AUTOCOMMIT"
+        ) as connection:
             connection.execute(
                 text(
                     f"""

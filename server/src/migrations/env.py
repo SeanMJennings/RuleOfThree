@@ -37,12 +37,13 @@ def create_db_if_not_exists():
     db_uri = config.get_section(config.config_ini_section, {})["sqlalchemy.url"]
     database = re.search(r"^(?P<dbname>[^?]+)", db_uri.split("/")[-1]).group("dbname")
     try:
-        connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;DATABASE=ruleofthree;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
+        connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
         connection_url = URL.create(
             "mssql+pyodbc", query={"odbc_connect": connection_string}
         )
         engine = create_engine(connection_url)
-        # engine = create_engine(db_uri)
+        print("end of alternate test")
+        engine = create_engine(db_uri)
         with engine.connect():
             print(f"Database {database} already exists.")
     except (exc.InterfaceError, exc.OperationalError, exc.ProgrammingError):

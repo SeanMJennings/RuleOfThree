@@ -34,54 +34,46 @@ target_metadata = None
 
 
 def create_db_if_not_exists():
-    # db_uri = config.get_section(config.config_ini_section, {})["sqlalchemy.url"]
-    # database = re.search(r"^(?P<dbname>[^?]+)", db_uri.split("/")[-1]).group("dbname")
-    database = "ruleofthree"
-    # try:
-    connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;DATABASE=ruleofthree;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
-    connection_url = URL.create(
-        "mssql+pyodbc", query={"odbc_connect": connection_string}
-    )
-    print(connection_url)
-    # engine = create_engine(connection_url)
-    # print("end of alternate test")
-    # engine = create_engine(db_uri)
-    # with engine.connect():
-    #    print(f"Database {database} already exists.")
-    # except (exc.InterfaceError, exc.OperationalError, exc.ProgrammingError):
-    print(f"Database {database} does not exist. Creating now.")
-    # create_database(connection_url)
-    master_connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;DATABASE=master;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
-    master_connection_url = URL.create(
-        "mssql+pyodbc", query={"odbc_connect": master_connection_string}
-    )
-    # engine = create_engine(connection_url.replace(database, "master"))
-    engine = create_engine(master_connection_url)
-    print("successfully connected to server")
-    with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
-        connection.execute(text(f"CREATE DATABASE {database};"))
-        print("successfully created database")
-        connection.execute(
-            text("sp_configure 'contained database authentication', 1; ")
+    db_uri = config.get_section(config.config_ini_section, {})["sqlalchemy.url"]
+    database = re.search(r"DATABASE%3D([^%]+)", db_uri).group(1)
+    try:
+        engine = create_engine(db_uri)
+        with engine.connect():
+            print(f"Database {database} already exists.")
+    except (exc.InterfaceError, exc.OperationalError, exc.ProgrammingError):
+        print(f"Database {database} does not exist. Creating now.")
+        # create_database(connection_url)
+        master_connection_string = "DRIVER=ODBC Driver 17 for SQL Server;SERVER=localhost;DATABASE=master;UID=sa;PWD=YourStrong@Passw0rdFakeForSourceControl"
+        master_connection_url = URL.create(
+            "mssql+pyodbc", query={"odbc_connect": master_connection_string}
         )
-        print("successfully executed sp_configure")
-        connection.execute(text("RECONFIGURE;"))
-        connection.execute(
-            text(f"ALTER DATABASE [{database}] SET CONTAINMENT = PARTIAL")
-        )
-        print("successfully executed ALTER DATABASE")
-    engine = create_engine(connection_url)
-    with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
-        connection.execute(
-            text(
-                f"""
-                Use [ruleofthree]
-                CREATE USER {secret_config['user']} with PASSWORD = '{secret_config['password']}'
-                exec sp_addrolemember 'db_owner', '{secret_config['user']}'
-                """
+        # engine = create_engine(connection_url.replace(database, "master"))
+        engine = create_engine(master_connection_url)
+        print("successfully connected to server")
+        with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
+            connection.execute(text(f"CREATE DATABASE {database};"))
+            print("successfully created database")
+            connection.execute(
+                text("sp_configure 'contained database authentication', 1; ")
             )
-        )
-        print("successfully created user")
+            print("successfully executed sp_configure")
+            connection.execute(text("RECONFIGURE;"))
+            connection.execute(
+                text(f"ALTER DATABASE [{database}] SET CONTAINMENT = PARTIAL")
+            )
+            print("successfully executed ALTER DATABASE")
+        engine = create_engine(connection_url)
+        with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
+            connection.execute(
+                text(
+                    f"""
+                    Use [ruleofthree]
+                    CREATE USER {secret_config['user']} with PASSWORD = '{secret_config['password']}'
+                    exec sp_addrolemember 'db_owner', '{secret_config['user']}'
+                    """
+                )
+            )
+            print("successfully created user")
 
 
 def run_migrations_offline() -> None:
